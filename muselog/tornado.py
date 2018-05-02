@@ -4,6 +4,9 @@ Helpers to log tornado request information.
 
 import logging
 
+import tornado
+from tornado import escape
+
 logger = logging.getLogger(__name__)
 
 
@@ -20,6 +23,11 @@ def log_request(handler):
         log_method = logger.warning
     else:
         log_method = logger.error
+
+    try:
+        req_body = escape.json_decode(handler.request.body)
+    except:
+        req_body = {}
 
     log_method("%d %s %.2fms", response_status, request_summary, request_time,
                extra={"request_duration": request_time,
